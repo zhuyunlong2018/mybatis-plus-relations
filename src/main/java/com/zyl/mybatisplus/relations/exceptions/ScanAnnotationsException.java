@@ -1,14 +1,13 @@
 package com.zyl.mybatisplus.relations.exceptions;
 
-@SuppressWarnings("serial")
-public class AutoMapperException extends RuntimeException {
+public class ScanAnnotationsException extends RuntimeException {
 	private String msg;
 
-	public AutoMapperException(String msg) {
+	public ScanAnnotationsException(String msg) {
 		this.msg = msg;
 	}
 
-	public AutoMapperException(String msg, Object object) {
+	public ScanAnnotationsException(String msg, Object object) {
 		super(object.toString());
 		this.msg = msg;
 	}

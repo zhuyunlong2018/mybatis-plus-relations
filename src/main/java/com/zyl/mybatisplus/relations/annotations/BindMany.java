@@ -11,9 +11,13 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 public @interface BindMany {
 
-//    // 本表关联属性
+    /**
+     * 本表关联属性,填写entity的属性，不是数据库字段
+     */
     String localProperty();
 
-    // 子表关联属性
+    /**
+     * 子表关联属性,填写entity的属性，不是数据库字段
+     */
     String foreignProperty();
 }

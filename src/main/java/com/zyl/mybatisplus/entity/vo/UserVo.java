@@ -33,7 +33,6 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class UserVo extends User {
-    private String deptName;
 
     @BindOne(localProperty = "deptId", foreignProperty = "deptId")
     private Dept dept;

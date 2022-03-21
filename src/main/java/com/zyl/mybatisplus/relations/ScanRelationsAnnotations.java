@@ -2,7 +2,7 @@ package com.zyl.mybatisplus.relations;
 
 import com.zyl.mybatisplus.relations.annotations.BindMany;
 import com.zyl.mybatisplus.relations.annotations.BindOne;
-import com.zyl.mybatisplus.relations.exceptions.AutoMapperException;
+import com.zyl.mybatisplus.relations.exceptions.ScanAnnotationsException;
 import com.zyl.mybatisplus.relations.resolver.BindManyResolver;
 import com.zyl.mybatisplus.relations.resolver.BindOneResolver;
 
@@ -95,7 +95,7 @@ public class ScanRelationsAnnotations {
             }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-            throw new AutoMapperException("Error in scan entity bean");
+            throw new ScanAnnotationsException("Error in scan entity bean");
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }

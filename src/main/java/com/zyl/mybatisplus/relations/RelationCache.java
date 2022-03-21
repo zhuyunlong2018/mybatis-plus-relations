@@ -2,7 +2,6 @@ package com.zyl.mybatisplus.relations;
 
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import com.zyl.mybatisplus.relations.enums.RelationType;
 import lombok.Data;
 
 import java.util.function.BiConsumer;
@@ -12,8 +11,6 @@ import java.util.function.Function;
 @Data
 @SuppressWarnings("rawtypes")
 public class RelationCache {
-
-    private RelationType relationType;
 
     // 关联表的entity类
     private Class<? extends Model<?>> foreignEntityClass;

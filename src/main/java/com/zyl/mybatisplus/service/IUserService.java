@@ -18,12 +18,31 @@
 
 package com.zyl.mybatisplus.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zyl.mybatisplus.domain.User;
+import com.zyl.mybatisplus.entity.vo.UserVo;
+
+import java.util.List;
 
 /**
  * @author explore
  * @since 2021/12/01 18:13
  **/
 public interface IUserService extends IService<User> {
+    /**
+     * 查询单个学生信息（一个学生对应一个部门）
+     */
+    UserVo getOneUser(Integer userId);
+
+    /**
+     * 批量查询学生信息（一个学生对应一个部门）
+     */
+    List<UserVo> getUserByList();
+
+    /**
+     * 分页查询学生信息（一个学生对应一个部门）
+     */
+    IPage<UserVo> getUserByPage(Page<User> page);
 }

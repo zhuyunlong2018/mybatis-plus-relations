@@ -26,21 +26,13 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zyl.mybatisplus.domain.Dept;
 import com.zyl.mybatisplus.domain.User;
 import com.zyl.mybatisplus.mapper.DeptMapper;
-import com.zyl.mybatisplus.mapper.UserMapper;
 import com.zyl.mybatisplus.relations.Relations;
 import com.zyl.mybatisplus.service.IDeptService;
-import com.zyl.mybatisplus.service.IUserService;
 import com.zyl.mybatisplus.entity.vo.DeptVo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xin.altitude.cms.common.util.EntityUtils;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toSet;
 
 /**
  * @author explore
@@ -48,12 +40,6 @@ import static java.util.stream.Collectors.toSet;
  **/
 @Service
 public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements IDeptService {
-    @Autowired
-    private UserMapper userMapper;
-    
-    
-    @Autowired
-    private IUserService userService;
     
     /**
      * 查询单个部门（其中一个部门有多个用户）
@@ -63,8 +49,8 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements ID
         // 查询部门基础信息
         LambdaQueryWrapper<Dept> wrapper = Wrappers.lambdaQuery(Dept.class).eq(Dept::getDeptId, deptId);
         DeptVo deptVo = EntityUtils.toObj(getOne(wrapper), DeptVo::new);
-//        Relations.with(deptVo, DeptVo::getUsers);
-        Relations.with(deptVo)
+//        Relations.withMany(deptVo, DeptVo::getUsers);
+        Relations.withMany(deptVo)
                 .bind(DeptVo::getUsers, userWrapper -> userWrapper.eq(User::getUserId, 4));
         return deptVo;
     }
@@ -76,8 +62,8 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements ID
     public List<DeptVo> getDeptByList() {
         // 按条件查询部门信息
         List<DeptVo> deptVos = EntityUtils.toList(list(Wrappers.emptyWrapper()), DeptVo::new);
-//        Relations.with(deptVos, DeptVo::getUsers);
-        Relations.with(deptVos).bind(DeptVo::getUsers, wrapper -> wrapper.eq(User::getUserId, 1));
+//        Relations.withMany(deptVos, DeptVo::getUsers);
+        Relations.withMany(deptVos).bind(DeptVo::getUsers, wrapper -> wrapper.eq(User::getUserId, 1));
         return deptVos;
     }
     
@@ -89,17 +75,8 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements ID
         // 按条件查询部门信息
         IPage<DeptVo> deptVoPage = EntityUtils.toPage(page(page, Wrappers.emptyWrapper()), DeptVo::new);
         if (deptVoPage.getRecords().size() > 0) {
-            addUserInfo(deptVoPage);
+            Relations.withMany(deptVoPage.getRecords(), DeptVo::getUsers);
         }
         return deptVoPage;
-    }
-    
-    private void addUserInfo(IPage<DeptVo> deptVoPage) {
-        // 准备deptId方便批量查询用户信息
-        Set<Integer> deptIds = EntityUtils.collectList(deptVoPage.getRecords(), Dept::getDeptId, toSet());
-        LambdaQueryWrapper<User> wrapper = Wrappers.lambdaQuery(User.class).in(User::getDeptId, deptIds);
-        Map<Integer, List<User>> hashMap = userService.list(wrapper).stream().collect(groupingBy(User::getDeptId));
-        // 合并结果，构造Vo，添加集合列表
-        deptVoPage.convert(e -> e.setUsers(hashMap.get(e.getDeptId())));
     }
 }

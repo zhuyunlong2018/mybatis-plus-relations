@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.zyl.mybatisplus.relations.RelationCache;
 import com.zyl.mybatisplus.relations.Relations;
 import com.zyl.mybatisplus.relations.annotations.BindMany;
-import com.zyl.mybatisplus.relations.enums.RelationType;
 import com.zyl.mybatisplus.relations.exceptions.RelationAnnotationException;
 
 import java.lang.reflect.Field;
@@ -29,7 +28,6 @@ public class BindManyResolver extends Resolver<BindMany> {
         setLocalPropertyGetter();
         setForeignPropertyGetter();
         setRelationPropertySetter(field, List.class);
-        cache.setRelationType(RelationType.BIND_MANY);
         Relations.relationMap.put(Relations.cacheKey(localEntityClass, field.getName()),
                 cache);
     }

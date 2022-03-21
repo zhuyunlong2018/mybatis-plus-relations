@@ -5,12 +5,12 @@ import com.zyl.mybatisplus.relations.RelationCache;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.groupingBy;
 
-public class ListBindManyHandler<T> extends ListHandler<T> {
+public class ListBindOneHandler<T> extends ListHandler<T> {
 
-    public ListBindManyHandler(List<T> list) {
+    public ListBindOneHandler(List<T> list) {
         super(list);
     }
 
@@ -18,9 +18,11 @@ public class ListBindManyHandler<T> extends ListHandler<T> {
     @Override
     protected void queryRelation(RelationCache cache, LambdaQueryWrapper wrapper) {
         HashMap collect =
-                (HashMap) (getForeignModel(cache)).selectList(wrapper).stream().collect(groupingBy(cache.getForeignPropertyGetter()));
+                (HashMap) (getForeignModel(cache)).selectList(wrapper).stream().collect(Collectors.toMap(cache.getForeignPropertyGetter(), item -> item));
+        System.out.println(collect);
         list.forEach(e -> cache.getRelationEntitySetter().accept(e,
                 collect.get(cache.getLocalPropertyGetter().apply(e))));
     }
+
 
 }

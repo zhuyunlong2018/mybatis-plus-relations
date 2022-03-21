@@ -1,6 +1,5 @@
 package com.zyl.mybatisplus.relations.exceptions;
 
-@SuppressWarnings("serial")
 public class RelationAnnotationException extends RuntimeException {
 	private String msg;
 
