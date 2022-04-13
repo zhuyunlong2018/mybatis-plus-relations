@@ -16,7 +16,7 @@ public class BindOneResolver extends Resolver<BindOne>{
 
     @Override
     public void resolve(Field field) {
-        if (field.getType().getSuperclass() != Model.class) {
+        if (!Model.class.isAssignableFrom(field.getType())) {
             throw new RelationAnnotationException(field.getName() + "绑定对象需要继承Model类型");
         }
         field.setAccessible(true);

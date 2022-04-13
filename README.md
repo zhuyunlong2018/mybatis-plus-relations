@@ -55,6 +55,9 @@ public class DeptVo extends Dept {
 
 目前实现@BindMany和@BindOne注解，分别表示绑定一对多和一对一，被关联模型（entity）必须继承mybatis-plus的Model
 
+- 调用Relations.withMany将返回一对多的Handler类
+- 调用Relations.withOne将返回一对一的Handler类
+
 
 #### 3. 查询注入
 
@@ -104,8 +107,8 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements ID
 // Relations.withMany(deptVos, DeptVo::getUsers); // 绑定关系,不进行其他查询
 
 
-// 使用bind方法传入lambda可以获得关联表的LambdaQueryWrapper进行添加其他筛选条件
-// Relations.withMany(deptVos).bind(DeptVo::getUsers, wrapper -> wrapper.eq(User::getUserId, 1));
+// 使用bindMany方法传入lambda可以获得关联表的LambdaQueryWrapper进行添加其他筛选条件
+// Relations.withMany(deptVos).bindMany(DeptVo::getUsers, wrapper -> wrapper.eq(User::getUserId, 1));
 ```
 
 

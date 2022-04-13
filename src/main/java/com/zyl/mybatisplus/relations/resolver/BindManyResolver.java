@@ -43,7 +43,7 @@ public class BindManyResolver extends Resolver<BindMany> {
             foreignEntityClass = (Class<?>) pt.getActualTypeArguments()[0];
             cache.setForeignEntityClass((Class<? extends Model<?>>) foreignEntityClass);
         }
-        if (foreignEntityClass.getSuperclass() != Model.class) {
+        if (!Model.class.isAssignableFrom(foreignEntityClass)) {
             throw new RelationAnnotationException(foreignEntityClass.getName() + "需要继承Modal类");
         }
     }

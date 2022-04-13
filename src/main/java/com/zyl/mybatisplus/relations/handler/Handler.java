@@ -50,17 +50,8 @@ public abstract class Handler<T> {
         return this;
     }
 
-    /**
-     * 绑定关联表属性，并接收一个lambda查询关联数据
-     * @param propertyGetter
-     * @param lambdaWrapperFunc
-     * @param <R>
-     * @return
-     */
     @SuppressWarnings({"unchecked"})
-    public <R> Handler<T> bind(IGetter<T, List<R>> propertyGetter,
-                                     Consumer<LambdaQueryWrapper<R>> lambdaWrapperFunc) {
-        String propertyName = BeanUtils.convertToFieldName(propertyGetter);
+    public <R> Handler<T> bind(String propertyName, Consumer<LambdaQueryWrapper<R>> lambdaWrapperFunc) {
         RelationCache cache = getRelationCache(propertyName);
         if (null == cache) {
             return this;
@@ -72,12 +63,48 @@ public abstract class Handler<T> {
     }
 
     /**
-     * 绑定关联表数据
+     * 绑定关联表属性，并接收一个lambda查询关联数据
+     * @param propertyGetter
+     * @param lambdaWrapperFunc
+     * @param <R>
+     * @return
+     */public <R> Handler<T> bindMany(IGetter<T, List<R>> propertyGetter,
+                                      Consumer<LambdaQueryWrapper<R>> lambdaWrapperFunc) {
+        String propertyName = BeanUtils.convertToFieldName(propertyGetter);
+        return bind(propertyName, lambdaWrapperFunc);
+    }
+
+    /**
+     * 绑定关联表属性，并接收一个lambda查询关联数据
+     * @param propertyGetter
+     * @param lambdaWrapperFunc
+     * @param <R>
+     * @return
+     */
+    public <R> Handler<T> bindOne(IGetter<T, R> propertyGetter,
+                                  Consumer<LambdaQueryWrapper<R>> lambdaWrapperFunc) {
+        String propertyName = BeanUtils.convertToFieldName(propertyGetter);
+        return bind(propertyName, lambdaWrapperFunc);
+    }
+
+    /**
+     * 绑定关联表多条数据一对多
      * @param propertyGetter
      * @param <R>
      * @return
      */
-    public <R> Handler<T> bind(IGetter<T, List<R>> propertyGetter) {
+    public <R> Handler<T> bindMany(IGetter<T, List<R>> propertyGetter) {
+        String propertyName = BeanUtils.convertToFieldName(propertyGetter);
+        return bind(propertyName);
+    }
+
+    /**
+     * 绑定一对一
+     * @param propertyGetter
+     * @param <R>
+     * @return
+     */
+    public <R> Handler<T> bindOne(IGetter<T, R> propertyGetter) {
         String propertyName = BeanUtils.convertToFieldName(propertyGetter);
         return bind(propertyName);
     }

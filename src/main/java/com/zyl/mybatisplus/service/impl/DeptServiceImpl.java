@@ -51,7 +51,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements ID
         DeptVo deptVo = EntityUtils.toObj(getOne(wrapper), DeptVo::new);
 //        Relations.withMany(deptVo, DeptVo::getUsers);
         Relations.withMany(deptVo)
-                .bind(DeptVo::getUsers, userWrapper -> userWrapper.eq(User::getUserId, 4));
+                .bindMany(DeptVo::getUsers, userWrapper -> userWrapper.eq(User::getUserId, 4));
         return deptVo;
     }
     
@@ -63,7 +63,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements ID
         // 按条件查询部门信息
         List<DeptVo> deptVos = EntityUtils.toList(list(Wrappers.emptyWrapper()), DeptVo::new);
 //        Relations.withMany(deptVos, DeptVo::getUsers);
-        Relations.withMany(deptVos).bind(DeptVo::getUsers, wrapper -> wrapper.eq(User::getUserId, 1));
+        Relations.withMany(deptVos).bindMany(DeptVo::getUsers, wrapper -> wrapper.eq(User::getUserId, 1));
         return deptVos;
     }
     
