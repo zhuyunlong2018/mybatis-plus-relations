@@ -1,8 +1,8 @@
 package com.zyl.mybatisplus.relations;
 
-import com.zyl.mybatisplus.relations.func.IGetter;
-import com.zyl.mybatisplus.relations.handler.*;
-import com.zyl.mybatisplus.relations.utils.BeanUtils;
+import com.zyl.mybatisplus.relations.binder.Binder;
+import com.zyl.mybatisplus.relations.binder.EntityBinder;
+import com.zyl.mybatisplus.relations.binder.ListBinder;
 import lombok.Data;
 
 import java.util.HashMap;
@@ -19,100 +19,22 @@ public class Relations {
     }
 
     /**
-     * bindMany关联模型，使用lambda getter方法
+     * 获取实体类关联绑定类
+     * @param entity
+     * @param <T>
+     * @return
      */
-    public static <T> Handler<T> withMany(List<T> list, IGetter<T, ?> propertyGetter) {
-        String property = BeanUtils.convertToFieldName(propertyGetter);
-        return withMany(list, property);
+    public static <T> Binder<T> with(T entity) {
+        return new EntityBinder<>(entity);
     }
 
     /**
-     * bindMany关联模型，使用属性字符串
+     * 获取列表关联绑定类
+     * @param list
+     * @param <T>
+     * @return
      */
-    public static <T> Handler<T> withMany(List<T> list, String propertyName) {
-        ListBindManyHandler<T> tWithRelations = new ListBindManyHandler<>(list);
-        return tWithRelations.bind(propertyName);
-    }
-
-    /**
-     * bindMany关联模型
-     */
-    public static <T> Handler<T> withMany(List<T> list) {
-        return new ListBindManyHandler<>(list);
-    }
-
-    // <========================================================
-
-    /**
-     * bindMany关联模型
-     */
-    public static <T> Handler<T> withMany(T entity, IGetter<T, ?> propertyGetter) {
-        String property = BeanUtils.convertToFieldName(propertyGetter);
-        return withMany(entity, property);
-    }
-
-    /**
-     * bindMany关联模型
-     */
-    public static <T> Handler<T> withMany(T entity, String propertyName) {
-        EntityBindManyHandler<T> tWithRelations = new EntityBindManyHandler<>(entity);
-        return tWithRelations.bind(propertyName);
-    }
-
-    /**
-     * bindMany关联模型
-     */
-    public static <T> Handler<T> withMany(T entity) {
-        return new EntityBindManyHandler<>(entity);
-    }
-
-    // <========================================================
-
-    /**
-     * bindOne关联模型
-     */
-    public static <T> Handler<T> withOne(List<T> list, IGetter<T, ?> propertyGetter) {
-        String property = BeanUtils.convertToFieldName(propertyGetter);
-        return withOne(list, property);
-    }
-
-    /**
-     * bindOne关联模型
-     */
-    public static <T> Handler<T> withOne(List<T> list, String propertyName) {
-        ListBindOneHandler<T> tWithRelations = new ListBindOneHandler<>(list);
-        return tWithRelations.bind(propertyName);
-    }
-
-    /**
-     * bindOne关联模型
-     */
-    public static <T> Handler<T> withOne(List<T> list) {
-        return new ListBindOneHandler<>(list);
-    }
-
-    // <========================================================
-
-    /**
-     * bindOne关联模型
-     */
-    public static <T> Handler<T> withOne(T entity, IGetter<T, ?> propertyGetter) {
-        String property = BeanUtils.convertToFieldName(propertyGetter);
-        return withOne(entity, property);
-    }
-
-    /**
-     * bindOne关联模型
-     */
-    public static <T> Handler<T> withOne(T entity, String propertyName) {
-        EntityBindOneHandler<T> tWithRelations = new EntityBindOneHandler<>(entity);
-        return tWithRelations.bind(propertyName);
-    }
-
-    /**
-     * bindOne关联模型
-     */
-    public static <T> Handler<T> withOne(T entity) {
-        return new EntityBindOneHandler<>(entity);
+    public static <T> Binder<T> with(List<T> list) {
+        return new ListBinder<>(list);
     }
 }

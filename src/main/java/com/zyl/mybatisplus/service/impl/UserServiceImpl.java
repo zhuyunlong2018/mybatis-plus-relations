@@ -52,7 +52,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         LambdaQueryWrapper<User> wrapper = Wrappers.lambdaQuery(User.class)
                 .eq(User::getUserId, userId);
         UserVo userVo = EntityUtils.toObj(getOne(wrapper), UserVo::new);
-        Relations.withOne(userVo, UserVo::getDept);
+        Relations.with(userVo).bindOne(UserVo::getDept);
         return userVo;
     }
 
@@ -65,7 +65,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         List<User> user = list(Wrappers.emptyWrapper());
         List<UserVo> userVos = user.stream().map(UserVo::new).collect(toList());
         // 此步骤可以有多个
-        Relations.withOne(userVos, UserVo::getDept);
+        Relations.with(userVos).bindOne(UserVo::getDept);
         return userVos;
     }
 
@@ -78,7 +78,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         IPage<User> xUserPage = page(page, Wrappers.emptyWrapper());
         // 初始化Vo
         IPage<UserVo> userVoPage = xUserPage.convert(UserVo::new);
-        Relations.withOne(userVoPage.getRecords(), UserVo::getDept);
+        Relations.with(userVoPage.getRecords()).bindOne(UserVo::getDept);
         return userVoPage;
     }
 

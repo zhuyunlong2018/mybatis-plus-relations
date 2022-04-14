@@ -3,10 +3,6 @@ package com.zyl.mybatisplus.relations.handler;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.zyl.mybatisplus.relations.RelationCache;
-import com.zyl.mybatisplus.relations.func.IGetter;
-import com.zyl.mybatisplus.relations.utils.BeanUtils;
-
-import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class Handler<T> {
@@ -40,73 +36,24 @@ public abstract class Handler<T> {
      * @return
      */
     @SuppressWarnings({"rawtypes"})
-    public Handler<T> bind(String propertyName) {
+    public void bind(String propertyName) {
         RelationCache cache = getRelationCache(propertyName);
         if (null == cache) {
-            return this;
+            return;
         }
         LambdaQueryWrapper wrapper = getWrapper(cache);
         queryRelation(cache, wrapper);
-        return this;
     }
 
     @SuppressWarnings({"unchecked"})
-    public <R> Handler<T> bind(String propertyName, Consumer<LambdaQueryWrapper<R>> lambdaWrapperFunc) {
+    public <R> void bind(String propertyName, Consumer<LambdaQueryWrapper<R>> lambdaWrapperFunc) {
         RelationCache cache = getRelationCache(propertyName);
         if (null == cache) {
-            return this;
+            return;
         }
         LambdaQueryWrapper<R> wrapper = (LambdaQueryWrapper<R>)getWrapper(cache);
         lambdaWrapperFunc.accept(wrapper);
         queryRelation(cache, wrapper);
-        return this;
-    }
-
-    /**
-     * 绑定关联表属性，并接收一个lambda查询关联数据
-     * @param propertyGetter
-     * @param lambdaWrapperFunc
-     * @param <R>
-     * @return
-     */public <R> Handler<T> bindMany(IGetter<T, List<R>> propertyGetter,
-                                      Consumer<LambdaQueryWrapper<R>> lambdaWrapperFunc) {
-        String propertyName = BeanUtils.convertToFieldName(propertyGetter);
-        return bind(propertyName, lambdaWrapperFunc);
-    }
-
-    /**
-     * 绑定关联表属性，并接收一个lambda查询关联数据
-     * @param propertyGetter
-     * @param lambdaWrapperFunc
-     * @param <R>
-     * @return
-     */
-    public <R> Handler<T> bindOne(IGetter<T, R> propertyGetter,
-                                  Consumer<LambdaQueryWrapper<R>> lambdaWrapperFunc) {
-        String propertyName = BeanUtils.convertToFieldName(propertyGetter);
-        return bind(propertyName, lambdaWrapperFunc);
-    }
-
-    /**
-     * 绑定关联表多条数据一对多
-     * @param propertyGetter
-     * @param <R>
-     * @return
-     */
-    public <R> Handler<T> bindMany(IGetter<T, List<R>> propertyGetter) {
-        String propertyName = BeanUtils.convertToFieldName(propertyGetter);
-        return bind(propertyName);
-    }
-
-    /**
-     * 绑定一对一
-     * @param propertyGetter
-     * @param <R>
-     * @return
-     */
-    public <R> Handler<T> bindOne(IGetter<T, R> propertyGetter) {
-        String propertyName = BeanUtils.convertToFieldName(propertyGetter);
-        return bind(propertyName);
     }
 
     /**

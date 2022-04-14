@@ -49,8 +49,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements ID
         // 查询部门基础信息
         LambdaQueryWrapper<Dept> wrapper = Wrappers.lambdaQuery(Dept.class).eq(Dept::getDeptId, deptId);
         DeptVo deptVo = EntityUtils.toObj(getOne(wrapper), DeptVo::new);
-//        Relations.withMany(deptVo, DeptVo::getUsers);
-        Relations.withMany(deptVo)
+         Relations.with(deptVo)
                 .bindMany(DeptVo::getUsers, userWrapper -> userWrapper.eq(User::getUserId, 4));
         return deptVo;
     }
@@ -63,7 +62,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements ID
         // 按条件查询部门信息
         List<DeptVo> deptVos = EntityUtils.toList(list(Wrappers.emptyWrapper()), DeptVo::new);
 //        Relations.withMany(deptVos, DeptVo::getUsers);
-        Relations.withMany(deptVos).bindMany(DeptVo::getUsers, wrapper -> wrapper.eq(User::getUserId, 1));
+        Relations.with(deptVos).bindMany(DeptVo::getUsers, wrapper -> wrapper.eq(User::getUserId, 1));
         return deptVos;
     }
     
@@ -75,7 +74,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements ID
         // 按条件查询部门信息
         IPage<DeptVo> deptVoPage = EntityUtils.toPage(page(page, Wrappers.emptyWrapper()), DeptVo::new);
         if (deptVoPage.getRecords().size() > 0) {
-            Relations.withMany(deptVoPage.getRecords(), DeptVo::getUsers);
+            Relations.with(deptVoPage.getRecords()).bindMany(DeptVo::getUsers);
         }
         return deptVoPage;
     }

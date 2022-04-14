@@ -5,12 +5,13 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.zyl.mybatisplus.relations.RelationCache;
 import com.zyl.mybatisplus.relations.Relations;
+
 import java.util.List;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
 
-public abstract class ListHandler<T> extends Handler<T>{
+public abstract class ListHandler<T> extends Handler<T> {
 
     /**
      * 关联主表list
@@ -25,10 +26,11 @@ public abstract class ListHandler<T> extends Handler<T>{
     @Override
     protected LambdaQueryWrapper getWrapper(RelationCache cache) {
         // 准备deptId方便批量查询用户信息
-        Set<?> localProperties = list.stream().map(s -> cache.getLocalPropertyGetter().apply(s)).collect(toSet());
+        Set<?> localProperties = list.stream()
+                .map(s -> cache.getLocalPropertyGetter().apply(s)).collect(toSet());
         // 用批量Id查询用户信息
-        return Wrappers.lambdaQuery(cache.getForeignEntityClass()).in(cache.getForeignPropertyGetter(),
-                localProperties);
+        return Wrappers.lambdaQuery(cache.getForeignEntityClass())
+                .in(cache.getForeignPropertyGetter(), localProperties);
     }
 
     @Override

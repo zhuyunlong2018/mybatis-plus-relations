@@ -53,35 +53,15 @@ public class DeptVo extends Dept {
 }
 ```
 
-目前实现@BindMany和@BindOne注解，分别表示绑定一对多和一对一，被关联模型（entity）必须继承mybatis-plus的Model
-
-- 调用Relations.withMany将返回一对多的Handler类
-- 调用Relations.withOne将返回一对一的Handler类
-
+目前实现@BindMany和@BindOne注解，分别表示绑定一对多和一对一，被关联模型（entity）必须是mybatis-plus的Model的子孙类
 
 #### 3. 查询注入
 
 ```java
 package com.zyl.mybatisplus.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.zyl.mybatisplus.domain.Dept;
-import com.zyl.mybatisplus.domain.User;
-import com.zyl.mybatisplus.mapper.DeptMapper;
-import com.zyl.mybatisplus.mapper.UserMapper;
-import com.zyl.mybatisplus.relations.Relations;
-import com.zyl.mybatisplus.service.IDeptService;
-import com.zyl.mybatisplus.service.IUserService;
-import com.zyl.mybatisplus.entity.vo.DeptVo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import xin.altitude.cms.common.util.EntityUtils;
+// import ...;
 
-import java.util.List;
 
 /**
  * @author explore
@@ -89,6 +69,19 @@ import java.util.List;
  **/
 @Service
 public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements IDeptService {
+
+    /**
+     * 查询单个部门（其中一个部门有多个用户）
+     */
+    @Override
+    public DeptVo getOneDept(Integer deptId) {
+        // 查询部门基础信息
+        LambdaQueryWrapper<Dept> wrapper = Wrappers.lambdaQuery(Dept.class).eq(Dept::getDeptId, deptId);
+        DeptVo deptVo = EntityUtils.toObj(getOne(wrapper), DeptVo::new);
+        Relations.with(deptVo).bindMany(DeptVo::getUsers);
+        return deptVo;
+    }
+    
     /**
      * 查询多个部门（其中一个部门有多个用户）
      */
@@ -96,7 +89,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements ID
     public List<DeptVo> getDeptByList() {
         // 按条件查询部门信息
         List<DeptVo> deptVos = EntityUtils.toList(list(Wrappers.emptyWrapper()), DeptVo::new);
-        Relations.withMany(deptVos, DeptVo::getUsers); // 绑定users属性的关系
+        Relations.with(deptVos).bindMany(DeptVo::getUsers); // 绑定users属性的关系
         return deptVos;
     }
 }
@@ -104,11 +97,11 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements ID
 
 #### 4. 查询添加其他条件
 ```java
-// Relations.withMany(deptVos, DeptVo::getUsers); // 绑定关系,不进行其他查询
+// Relations.with(deptVos).bindMany(DeptVo::getUsers); // 绑定关系,不进行其他查询
 
 
 // 使用bindMany方法传入lambda可以获得关联表的LambdaQueryWrapper进行添加其他筛选条件
-// Relations.withMany(deptVos).bindMany(DeptVo::getUsers, wrapper -> wrapper.eq(User::getUserId, 1));
+// Relations.with(deptVos).bindMany(DeptVo::getUsers, wrapper -> wrapper.eq(User::getUserId, 1));
 ```
 
 
