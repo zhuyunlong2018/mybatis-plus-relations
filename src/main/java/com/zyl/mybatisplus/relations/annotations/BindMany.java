@@ -20,4 +20,15 @@ public @interface BindMany {
      * 子表关联属性,填写entity的属性，不是数据库字段
      */
     String foreignProperty();
+
+    /**
+     * 添加的sql，调用LambdaQueryWrapper的apply方法
+     * @return
+     */
+    String applySql() default "";
+
+    /**
+     * 最后拼接的sql语句，调用LambdaQueryWrapper的last方法
+     */
+    String lastSql() default "";
 }

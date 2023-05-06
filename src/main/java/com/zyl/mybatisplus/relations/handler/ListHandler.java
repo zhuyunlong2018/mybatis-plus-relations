@@ -4,22 +4,31 @@ package com.zyl.mybatisplus.relations.handler;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.zyl.mybatisplus.relations.RelationCache;
-import com.zyl.mybatisplus.relations.Relations;
+import com.zyl.mybatisplus.relations.binder.Binder;
+import com.zyl.mybatisplus.relations.exceptions.RelationAnnotationException;
 
 import java.util.List;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
 
-public abstract class ListHandler<T> extends Handler<T> {
+public abstract class ListHandler<T, R> extends Handler<T, R> {
 
     /**
      * 关联主表list
      */
     protected List<T> list;
 
-    public ListHandler(List<T> list) {
+    public ListHandler(List<T> list, Binder<T> binder) {
+        if (null == list) {
+            throw new RelationAnnotationException("传入的list错误");
+        }
         this.list = list;
+        this.binder = binder;
+        if (!this.list.isEmpty()) {
+            T entityFirst = list.get(0);
+            localEntityClass = entityFirst.getClass();
+        }
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -31,22 +40,6 @@ public abstract class ListHandler<T> extends Handler<T> {
         // 用批量Id查询用户信息
         return Wrappers.lambdaQuery(cache.getForeignEntityClass())
                 .in(cache.getForeignPropertyGetter(), localProperties);
-    }
-
-    @Override
-    protected RelationCache getRelationCache(String propertyName) {
-        if (list.size() == 0) {
-            return null;
-        }
-        // 进行注入
-        T entityFirst = list.get(0);
-        Class<?> entityClass = entityFirst.getClass();
-        if (!Relations.relationMap.containsKey(Relations.cacheKey(entityClass, propertyName))) {
-            // 找不到关系
-            return null;
-        }
-        // 进行注入
-        return Relations.relationMap.get(Relations.cacheKey(entityClass, propertyName));
     }
 
 }

@@ -78,7 +78,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements ID
         // 查询部门基础信息
         LambdaQueryWrapper<Dept> wrapper = Wrappers.lambdaQuery(Dept.class).eq(Dept::getDeptId, deptId);
         DeptVo deptVo = EntityUtils.toObj(getOne(wrapper), DeptVo::new);
-        Relations.with(deptVo).bindMany(DeptVo::getUsers);
+        Relations.with(deptVo).bindMany(DeptVo::getUsers).end();
         return deptVo;
     }
     
@@ -89,7 +89,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements ID
     public List<DeptVo> getDeptByList() {
         // 按条件查询部门信息
         List<DeptVo> deptVos = EntityUtils.toList(list(Wrappers.emptyWrapper()), DeptVo::new);
-        Relations.with(deptVos).bindMany(DeptVo::getUsers); // 绑定users属性的关系
+        Relations.with(deptVos).bindMany(DeptVo::getUsers).end(); // 绑定users属性的关系
         return deptVos;
     }
 }
@@ -101,7 +101,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements ID
 
 
 // 使用bindMany方法传入lambda可以获得关联表的LambdaQueryWrapper进行添加其他筛选条件
-// Relations.with(deptVos).bindMany(DeptVo::getUsers, wrapper -> wrapper.eq(User::getUserId, 1));
+// Relations.with(deptVos).bindMany(DeptVo::getUsers).query(wrapper -> wrapper.eq(User::getUserId, 1)).end();
 ```
 
 

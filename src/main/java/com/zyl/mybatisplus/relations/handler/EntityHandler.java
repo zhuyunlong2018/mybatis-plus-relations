@@ -3,16 +3,22 @@ package com.zyl.mybatisplus.relations.handler;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.zyl.mybatisplus.relations.RelationCache;
-import com.zyl.mybatisplus.relations.Relations;
+import com.zyl.mybatisplus.relations.binder.Binder;
+import com.zyl.mybatisplus.relations.exceptions.RelationAnnotationException;
 
-public abstract class EntityHandler<T> extends Handler<T> {
+public abstract class EntityHandler<T, R> extends Handler<T, R> {
     /**
      * 关联主表entity
      */
     protected T entity;
 
-    public EntityHandler(T entity) {
+    public EntityHandler(T entity, Binder<T> binder) {
+        if (null == entity) {
+            throw new RelationAnnotationException("模型类错误");
+        }
         this.entity = entity;
+        this.binder = binder;
+        this.localEntityClass = (Class<T>) entity.getClass();
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -23,17 +29,5 @@ public abstract class EntityHandler<T> extends Handler<T> {
                         cache.getForeignPropertyGetter(),
                         cache.getLocalPropertyGetter().apply(entity)
                 );
-    }
-
-    @Override
-    protected RelationCache getRelationCache(String propertyName) {
-        // 进行注入
-        Class<?> entityClass = entity.getClass();
-        if (!Relations.relationMap.containsKey(Relations.cacheKey(entityClass, propertyName))) {
-            // 找不到关系
-            return null;
-        }
-        // 进行注入
-        return Relations.relationMap.get(Relations.cacheKey(entityClass, propertyName));
     }
 }

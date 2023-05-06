@@ -35,7 +35,7 @@ import java.util.List;
 @ToString(callSuper = true)
 public class DeptVo extends Dept {
 
-    @BindMany(localProperty = "deptId", foreignProperty = "deptId")
+    @BindMany(localProperty = "deptId", foreignProperty = "deptId", applySql = "user_id >= 2")
     private List<User> users;
 
     public DeptVo(Dept dept) {

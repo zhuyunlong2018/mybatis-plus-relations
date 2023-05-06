@@ -33,7 +33,7 @@ public class CreateFunctionUtil {
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
-        System.out.println("SFunction 创建失败! {},{}" + clazz + methodName);
+        System.out.println("SFunction 创建失败! {},{}" + clazz + "." + methodName);
         return null;
     }
 
@@ -56,7 +56,7 @@ public class CreateFunctionUtil {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        System.out.println("Function 创建失败! {},{}" + clazz + methodName);
+        System.out.println("Function 创建失败! {},{}" + clazz + "." + methodName);
         return null;
     }
 
@@ -77,7 +77,7 @@ public class CreateFunctionUtil {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        System.out.println("BiConsumer 创建失败! {},{}" + clazz + methodName);
+        System.out.println("BiConsumer 创建失败! {},{}" + clazz + "." + methodName);
         return null;
     }
 }

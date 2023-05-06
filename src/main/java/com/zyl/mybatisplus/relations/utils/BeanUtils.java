@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-public class BeanUtils {
+public class BeanUtils extends org.springframework.beans.BeanUtils {
 
     /**
      * 缓存类-Lambda的映射关系
@@ -119,6 +119,24 @@ public class BeanUtils {
         }
         sb.insert(0, "set");
         return sb.toString();
+    }
+
+    /**
+     * Bean属性复制工具方法。
+     *
+     * @param dest 目标对象
+     * @param src 源对象
+     */
+    public static void copyBeanProp(Object dest, Object src)
+    {
+        try
+        {
+            copyProperties(src, dest);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
 }

@@ -2,9 +2,11 @@ package com.zyl.mybatisplus.relations;
 
 import com.zyl.mybatisplus.relations.annotations.BindMany;
 import com.zyl.mybatisplus.relations.annotations.BindOne;
+import com.zyl.mybatisplus.relations.annotations.ManyBindMany;
 import com.zyl.mybatisplus.relations.exceptions.ScanAnnotationsException;
 import com.zyl.mybatisplus.relations.resolver.BindManyResolver;
 import com.zyl.mybatisplus.relations.resolver.BindOneResolver;
+import com.zyl.mybatisplus.relations.resolver.ManyBindManyResolver;
 
 import java.io.File;
 import java.io.IOException;
@@ -86,10 +88,16 @@ public class ScanRelationsAnnotations {
                         hasManyResolver.resolve(field);
                         continue;
                     }
-                    BindOne bindO = field.getAnnotation(BindOne.class);
-                    if (bindO != null) {
-                        BindOneResolver hasOneResolver = new BindOneResolver(bindO, clazz);
+                    BindOne bindOne = field.getAnnotation(BindOne.class);
+                    if (bindOne != null) {
+                        BindOneResolver hasOneResolver = new BindOneResolver(bindOne, clazz);
                         hasOneResolver.resolve(field);
+                        continue;
+                    }
+                    ManyBindMany manyBindMany = field.getAnnotation(ManyBindMany.class);
+                    if (manyBindMany != null) {
+                        ManyBindManyResolver manyBindManyResolver = new ManyBindManyResolver(manyBindMany, clazz);
+                        manyBindManyResolver.resolve(field);
                     }
                 }
             }

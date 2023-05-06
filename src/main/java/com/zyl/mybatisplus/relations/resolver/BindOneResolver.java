@@ -1,12 +1,14 @@
 package com.zyl.mybatisplus.relations.resolver;
 
-import com.zyl.mybatisplus.relations.RelationCache;
 import com.zyl.mybatisplus.relations.Relations;
 import com.zyl.mybatisplus.relations.annotations.BindOne;
 import com.zyl.mybatisplus.relations.exceptions.RelationAnnotationException;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.zyl.mybatisplus.relations.utils.BeanUtils;
+import com.zyl.mybatisplus.relations.utils.CreateFunctionUtil;
 
 import java.lang.reflect.Field;
+import java.util.function.BiConsumer;
 
 public class BindOneResolver extends Resolver<BindOne>{
 
@@ -15,29 +17,31 @@ public class BindOneResolver extends Resolver<BindOne>{
     }
 
     @Override
-    public void resolve(Field field) {
+    protected void checkFieldType(Field field) {
         if (!Model.class.isAssignableFrom(field.getType())) {
             throw new RelationAnnotationException(field.getName() + "绑定对象需要继承Model类型");
         }
-        field.setAccessible(true);
-        setForeignEntityClass(field);
-        setLocalPropertyGetter();
-        setForeignPropertyGetter();
-        setRelationPropertySetter(field, foreignEntityClass);
-        Relations.relationMap.put(Relations.cacheKey(localEntityClass, field.getName()),
-                cache);
     }
 
     @Override
     protected void setForeignEntityClass(Field field) {
-        cache = new RelationCache();
         foreignEntityClass = field.getType();
         cache.setForeignEntityClass((Class<? extends Model<?>>) foreignEntityClass);
+    }
+
+    @Override
+    protected void setRelationPropertySetter(Field field) {
+        final BiConsumer<?, ?> setterFunc = CreateFunctionUtil.createSetFunction(localEntityClass,
+                BeanUtils.getSetterMethodName(field.getName()), foreignEntityClass);
+        cache.setRelationEntitySetter(setterFunc);
     }
 
     @Override
     protected void setProperty() {
         localProperty = relationAnnotation.localProperty();
         foreignProperty = relationAnnotation.foreignProperty();
+        cache.setApplySql(relationAnnotation.applySql());
+        cache.setLastSql(relationAnnotation.lastSql());
     }
+
 }

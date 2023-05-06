@@ -40,7 +40,7 @@ import java.util.List;
  **/
 @Service
 public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements IDeptService {
-    
+
     /**
      * 查询单个部门（其中一个部门有多个用户）
      */
@@ -49,11 +49,12 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements ID
         // 查询部门基础信息
         LambdaQueryWrapper<Dept> wrapper = Wrappers.lambdaQuery(Dept.class).eq(Dept::getDeptId, deptId);
         DeptVo deptVo = EntityUtils.toObj(getOne(wrapper), DeptVo::new);
-         Relations.with(deptVo)
-                .bindMany(DeptVo::getUsers, userWrapper -> userWrapper.eq(User::getUserId, 4));
+        Relations.with(deptVo)
+                .bindMany(DeptVo::getUsers)
+                .query(userWrapper -> userWrapper.eq(User::getUserId, 4));
         return deptVo;
     }
-    
+
     /**
      * 查询多个部门（其中一个部门有多个用户）
      */
@@ -61,11 +62,13 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements ID
     public List<DeptVo> getDeptByList() {
         // 按条件查询部门信息
         List<DeptVo> deptVos = EntityUtils.toList(list(Wrappers.emptyWrapper()), DeptVo::new);
-//        Relations.withMany(deptVos, DeptVo::getUsers);
-        Relations.with(deptVos).bindMany(DeptVo::getUsers, wrapper -> wrapper.eq(User::getUserId, 1));
+        Relations.with(deptVos)
+                .bindMany(DeptVo::getUsers)
+                .query(wrapper -> wrapper.eq(User::getUserId, 2))
+                .end();
         return deptVos;
     }
-    
+
     /**
      * 分页查询部门信息（其中一个部门有多个用户）
      */
@@ -74,7 +77,9 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements ID
         // 按条件查询部门信息
         IPage<DeptVo> deptVoPage = EntityUtils.toPage(page(page, Wrappers.emptyWrapper()), DeptVo::new);
         if (deptVoPage.getRecords().size() > 0) {
-            Relations.with(deptVoPage.getRecords()).bindMany(DeptVo::getUsers);
+            Relations.with(deptVoPage.getRecords())
+                    .bindMany(DeptVo::getUsers)
+                    .end();
         }
         return deptVoPage;
     }
