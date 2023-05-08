@@ -6,27 +6,19 @@ import com.zyl.mybatisplus.relations.RelationCache;
 import com.zyl.mybatisplus.relations.binder.Binder;
 import com.zyl.mybatisplus.relations.utils.StringUtils;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toSet;
-
-/**
- * list绑定多对多的关系
- *
- * @param <T>
- * @param <R>
- */
-public class ListManyBindManyHandler<T, R> extends ListBindManyHandler<T, R> {
+public class EntityManyBindManyHandler<T, R> extends EntityBindManyHandler<T, R> {
 
     /**
      * 连接表的外键集合
      */
     private Set<?> linkForeignProperties;
 
-    public ListManyBindManyHandler(List<T> list, Binder<T> binder, RelationCache cache) {
-        super(list, binder, cache);
+    public EntityManyBindManyHandler(T entity, Binder<T> binder, RelationCache cache) {
+        super(entity, binder, cache);
     }
 
     @SuppressWarnings({"unchecked"})
@@ -44,11 +36,8 @@ public class ListManyBindManyHandler<T, R> extends ListBindManyHandler<T, R> {
 
     @SuppressWarnings({"unchecked"})
     private LambdaQueryWrapper<R> getLinkQueryWrapper() {
-        Set<?> localProperties = list.stream()
-                .map(s -> cache.getLocalPropertyGetter().apply(s)).collect(toSet());
-        // 用批量Id查询用户信息
         LambdaQueryWrapper<R> linkWrapper = Wrappers.lambdaQuery(cache.getLinkEntityClass())
-                .in(cache.getLinkLocalPropertyGetter(), localProperties);
+                .eq(cache.getLinkLocalPropertyGetter(), cache.getLocalPropertyGetter().apply(entity));
         linkWrapper.apply(!StringUtils.isEmpty(cache.getLinkApplySql()), cache.getLinkApplySql());
         if (linkLambdaWrapperFunc != null) {
             linkLambdaWrapperFunc.accept(linkWrapper);
@@ -67,38 +56,15 @@ public class ListManyBindManyHandler<T, R> extends ListBindManyHandler<T, R> {
                 .map(cache.getLinkForeignPropertyGetter())
                 .collect(Collectors.toSet());
         if (linkForeignProperties.size() > 0) {
-            // 中间表hashMap
-            HashMap linkMap = (HashMap) linkList.stream()
-                    .collect(groupingBy(cache.getLinkLocalPropertyGetter()));
-
-            // 查询关联数据
-            foreignEntityList = getForeignModel()
+            foreignEntityList = (List<R>) getForeignModel()
                     .selectList((LambdaQueryWrapper) getQueryWrapper());
+            // 换行VO
             foreignEntityList = covertListModelToVO(foreignEntityList);
-            // 关联表hashMap
-            HashMap<Object, List<Object>> linkDataMap = (HashMap) foreignEntityList
-                    .stream()
-                    .collect(groupingBy(cache.getForeignPropertyGetter()));
-            // 组装
-            list.forEach(e -> {
-                List<Object> linkData = (List) linkMap.get(cache.getLocalPropertyGetter().apply(e));
-                if (null == linkData || linkData.isEmpty()) {
-                    return;
-                }
-                List<List<Object>> subList = (List) linkData.stream()
-                        .map(cache.getLinkForeignPropertyGetter())
-                        .map(linkDataMap::get)
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList());
-                List<Object> foreignList = subList.stream()
-                        .flatMap(List::stream)
-                        .collect(Collectors.toList());
-                cache.getRelationEntitySetter().accept(e, foreignList);
-                if (!StringUtils.isEmpty(cache.getIterateLinkMethod())) {
-                    // 进入模型迭代器
-                    cache.getIterateLinkMethodSetter().accept(e, linkData);
-                }
-            });
+            cache.getRelationEntitySetter().accept(entity, foreignEntityList);
+            if (!StringUtils.isEmpty(cache.getIterateLinkMethod())) {
+                // 进入模型迭代器
+                cache.getIterateLinkMethodSetter().accept(entity, linkList);
+            }
         }
     }
 }

@@ -31,17 +31,17 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-@TableName("tb_user")
+@TableName("r_user")
 public class User extends Model<User> {
     @TableId()
-    private Integer userId;
-    private String userName;
+    private Integer id;
+    private String name;
     private Integer deptId;
     
     public User(User user) {
         if (user != null) {
-            this.userId = user.getUserId();
-            this.userName = user.getUserName();
+            this.id = user.getId();
+            this.name = user.getName();
             this.deptId = user.getDeptId();
         }
     }

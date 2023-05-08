@@ -3,7 +3,6 @@ package com.zyl.mybatisplus.relations.resolver;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.zyl.mybatisplus.relations.RelationCache;
-import com.zyl.mybatisplus.relations.Relations;
 import com.zyl.mybatisplus.relations.exceptions.RelationAnnotationException;
 import com.zyl.mybatisplus.relations.utils.CreateFunctionUtil;
 import com.zyl.mybatisplus.relations.utils.BeanUtils;
@@ -61,19 +60,19 @@ public abstract class Resolver<T> {
 
     public void resolve(Field field) {
         this.field = field;
-        checkFieldType(field);
+        checkFieldType();
         field.setAccessible(true);
-        setForeignEntityClass(field);
+        setForeignEntityClass();
         setLocalPropertyGetter();
         setForeignPropertyGetter();
-        setRelationPropertySetter(field);
-        Relations.relationMap.put(Relations.cacheKey(localEntityClass, field.getName()),
-                cache);
+        setRelationPropertySetter();
+        cache.setFieldName(field.getName());
+        RelationCache.putCache(localEntityClass, field.getName(), cache);
     }
 
-    abstract protected void checkFieldType(Field field);
+    abstract protected void checkFieldType();
 
-    protected void setForeignEntityClass(Field field) {
+    protected void setForeignEntityClass() {
         Type genericType = field.getGenericType();
         // 如果是泛型参数的类型
         if (genericType instanceof ParameterizedType) {
@@ -102,7 +101,7 @@ public abstract class Resolver<T> {
         cache.setForeignPropertyGetter(getterFunc);
     }
 
-    protected void setRelationPropertySetter(Field field) {
+    protected void setRelationPropertySetter() {
         final BiConsumer<?, ?> setterFunc = CreateFunctionUtil.createSetFunction(localEntityClass,
                 BeanUtils.getSetterMethodName(field.getName()), List.class);
         cache.setRelationEntitySetter(setterFunc);

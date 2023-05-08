@@ -1,5 +1,7 @@
 package com.zyl.mybatisplus.relations.annotations;
 
+import com.baomidou.mybatisplus.extension.activerecord.Model;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 

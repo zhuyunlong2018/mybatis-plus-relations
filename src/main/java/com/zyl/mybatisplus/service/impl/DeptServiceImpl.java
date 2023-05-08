@@ -24,11 +24,10 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zyl.mybatisplus.domain.Dept;
-import com.zyl.mybatisplus.domain.User;
 import com.zyl.mybatisplus.mapper.DeptMapper;
 import com.zyl.mybatisplus.relations.Relations;
 import com.zyl.mybatisplus.service.IDeptService;
-import com.zyl.mybatisplus.entity.vo.DeptVo;
+import com.zyl.mybatisplus.entity.vo.DeptVO;
 import org.springframework.stereotype.Service;
 import xin.altitude.cms.common.util.EntityUtils;
 
@@ -45,13 +44,13 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements ID
      * 查询单个部门（其中一个部门有多个用户）
      */
     @Override
-    public DeptVo getOneDept(Integer deptId) {
+    public DeptVO getOneDept(Integer deptId) {
         // 查询部门基础信息
-        LambdaQueryWrapper<Dept> wrapper = Wrappers.lambdaQuery(Dept.class).eq(Dept::getDeptId, deptId);
-        DeptVo deptVo = EntityUtils.toObj(getOne(wrapper), DeptVo::new);
+        LambdaQueryWrapper<Dept> wrapper = Wrappers.lambdaQuery(Dept.class).eq(Dept::getId, deptId);
+        DeptVO deptVo = EntityUtils.toObj(getOne(wrapper), DeptVO::new);
         Relations.with(deptVo)
-                .bindMany(DeptVo::getUsers)
-                .query(userWrapper -> userWrapper.eq(User::getUserId, 4));
+                .bindMany(DeptVO::getUsers)
+                .end();
         return deptVo;
     }
 
@@ -59,12 +58,11 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements ID
      * 查询多个部门（其中一个部门有多个用户）
      */
     @Override
-    public List<DeptVo> getDeptByList() {
+    public List<DeptVO> getDeptByList() {
         // 按条件查询部门信息
-        List<DeptVo> deptVos = EntityUtils.toList(list(Wrappers.emptyWrapper()), DeptVo::new);
+        List<DeptVO> deptVos = EntityUtils.toList(list(Wrappers.emptyWrapper()), DeptVO::new);
         Relations.with(deptVos)
-                .bindMany(DeptVo::getUsers)
-                .query(wrapper -> wrapper.eq(User::getUserId, 2))
+                .bindMany(DeptVO::getUsers)
                 .end();
         return deptVos;
     }
@@ -73,14 +71,12 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements ID
      * 分页查询部门信息（其中一个部门有多个用户）
      */
     @Override
-    public IPage<DeptVo> getDeptByPage(Page<Dept> page) {
+    public IPage<DeptVO> getDeptByPage(Page<Dept> page) {
         // 按条件查询部门信息
-        IPage<DeptVo> deptVoPage = EntityUtils.toPage(page(page, Wrappers.emptyWrapper()), DeptVo::new);
-        if (deptVoPage.getRecords().size() > 0) {
-            Relations.with(deptVoPage.getRecords())
-                    .bindMany(DeptVo::getUsers)
-                    .end();
-        }
+        IPage<DeptVO> deptVoPage = EntityUtils.toPage(page(page, Wrappers.emptyWrapper()), DeptVO::new);
+        Relations.with(deptVoPage.getRecords())
+                .bindMany(DeptVO::getUsers)
+                .end();
         return deptVoPage;
     }
 }

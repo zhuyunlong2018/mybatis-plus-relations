@@ -28,16 +28,16 @@ import java.util.Optional;
 
 @Data
 @NoArgsConstructor
-@TableName("tb_dept")
+@TableName("r_dept")
 public class Dept extends Model<Dept> {
     @TableId()
-    private Integer deptId;
-    private String deptName;
+    private Integer id;
+    private String name;
     
     public Dept(Dept dept) {
         Optional.ofNullable(dept).ifPresent(e -> {
-            this.deptId = e.getDeptId();
-            this.deptName = e.getDeptName();
+            this.id = e.getId();
+            this.name = e.getName();
         });
     }
 }

@@ -22,7 +22,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zyl.mybatisplus.domain.Dept;
-import com.zyl.mybatisplus.entity.vo.DeptVo;
+import com.zyl.mybatisplus.entity.vo.DeptVO;
 
 import java.util.List;
 
@@ -34,15 +34,15 @@ public interface IDeptService extends IService<Dept> {
     /**
      * 查询单个部门（其中一个部门有多个用户）
      */
-    DeptVo getOneDept(Integer deptId);
+    DeptVO getOneDept(Integer deptId);
     
     /**
      * 查询多个部门（其中一个部门有多个用户）
      */
-    List<DeptVo> getDeptByList();
+    List<DeptVO> getDeptByList();
     
     /**
      * 分页查询部门信息（其中一个部门有多个用户）
      */
-    IPage<DeptVo> getDeptByPage(Page<Dept> page);
+    IPage<DeptVO> getDeptByPage(Page<Dept> page);
 }

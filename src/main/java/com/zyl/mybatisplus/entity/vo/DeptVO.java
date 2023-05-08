@@ -20,24 +20,21 @@ package com.zyl.mybatisplus.entity.vo;
 
 import com.zyl.mybatisplus.domain.Dept;
 import com.zyl.mybatisplus.domain.User;
-import com.zyl.mybatisplus.relations.annotations.BindOne;
+import com.zyl.mybatisplus.relations.annotations.BindMany;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+import java.util.List;
 
 
-/**
- * @author explore
- */
 @Data
-@EqualsAndHashCode(callSuper = true)
-@NoArgsConstructor
-public class UserVo extends User {
+@ToString(callSuper = true)
+public class DeptVO extends Dept {
 
-    @BindOne(localProperty = "deptId", foreignProperty = "deptId")
-    private Dept dept;
-    
-    public UserVo(User user) {
-        super(user);
+    @BindMany(localProperty = "id", foreignProperty = "deptId")
+    private List<User> users;
+
+    public DeptVO(Dept dept) {
+        super(dept);
     }
 }

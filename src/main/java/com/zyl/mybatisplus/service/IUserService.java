@@ -22,7 +22,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zyl.mybatisplus.domain.User;
-import com.zyl.mybatisplus.entity.vo.UserVo;
+import com.zyl.mybatisplus.entity.vo.UserVO;
 
 import java.util.List;
 
@@ -34,15 +34,15 @@ public interface IUserService extends IService<User> {
     /**
      * 查询单个学生信息（一个学生对应一个部门）
      */
-    UserVo getOneUser(Integer userId);
+    UserVO getOneUser(Integer userId);
 
     /**
      * 批量查询学生信息（一个学生对应一个部门）
      */
-    List<UserVo> getUserByList();
+    List<UserVO> getUserByList();
 
     /**
      * 分页查询学生信息（一个学生对应一个部门）
      */
-    IPage<UserVo> getUserByPage(Page<User> page);
+    IPage<UserVO> getUserByPage(Page<User> page);
 }

@@ -23,8 +23,12 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zyl.mybatisplus.domain.Dept;
+import com.zyl.mybatisplus.domain.Skill;
 import com.zyl.mybatisplus.domain.User;
-import com.zyl.mybatisplus.entity.vo.UserVo;
+import com.zyl.mybatisplus.domain.UserSkillRelation;
+import com.zyl.mybatisplus.entity.vo.UserSkillVO;
+import com.zyl.mybatisplus.entity.vo.UserVO;
 import com.zyl.mybatisplus.mapper.UserMapper;
 import com.zyl.mybatisplus.relations.Relations;
 import com.zyl.mybatisplus.service.IUserService;
@@ -45,40 +49,56 @@ import static java.util.stream.Collectors.*;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
 
     /**
-     * 查询单个学生信息（一个学生对应一个部门）
+     * 查询单个用户信息（一个用户对应一个部门）
      */
     @Override
-    public UserVo getOneUser(Integer userId) {
+    public UserVO getOneUser(Integer userId) {
         LambdaQueryWrapper<User> wrapper = Wrappers.lambdaQuery(User.class)
-                .eq(User::getUserId, userId);
-        UserVo userVo = EntityUtils.toObj(getOne(wrapper), UserVo::new);
-        Relations.with(userVo).bindOne(UserVo::getDept).end();
+                .eq(User::getId, userId);
+        UserVO userVo = EntityUtils.toObj(getOne(wrapper), UserVO::new);
+        Relations.with(userVo).bindOne(UserVO::getDept)
+                .binder()
+                .manyBindMany(UserVO::getSkills)
+                .binder()
+                .bindMany(UserVO::getUserSkills)
+                .deepWith(binder -> {
+                    binder.bindOne(UserSkillVO::getSkill)
+                            .end();
+                })
+                .end();
         return userVo;
     }
 
     /**
-     * 批量查询学生信息（一个学生对应一个部门）
+     * 批量查询用户信息（一个用户对应一个部门）
      */
     @Override
-    public List<UserVo> getUserByList() {
+    public List<UserVO> getUserByList() {
         // 先查询用户信息（表现形式为列表）
         List<User> user = list(Wrappers.emptyWrapper());
-        List<UserVo> userVos = user.stream().map(UserVo::new).collect(toList());
+        List<UserVO> userVos = user.stream().map(UserVO::new).collect(toList());
         // 此步骤可以有多个
-        Relations.with(userVos).bindOne(UserVo::getDept).end();
+        Relations.with(userVos)
+                .bindOne(UserVO::getDept)
+                .binder()
+                .manyBindMany(UserVO::getSkills)
+                .linkQuery((LambdaQueryWrapper<UserSkillRelation> wrapper) -> {
+                    wrapper.gt(UserSkillRelation::getScore, 90);
+                })
+                .end();
         return userVos;
     }
 
     /**
-     * 分页查询学生信息（一个学生对应一个部门）
+     * 分页查询用户信息（一个用户对应一个部门）
      */
     @Override
-    public IPage<UserVo> getUserByPage(Page<User> page) {
+    public IPage<UserVO> getUserByPage(Page<User> page) {
         // 先查询用户信息
         IPage<User> xUserPage = page(page, Wrappers.emptyWrapper());
         // 初始化Vo
-        IPage<UserVo> userVoPage = xUserPage.convert(UserVo::new);
-        Relations.with(userVoPage.getRecords()).bindOne(UserVo::getDept).end();
+        IPage<UserVO> userVoPage = xUserPage.convert(UserVO::new);
+        Relations.with(userVoPage.getRecords()).bindOne(UserVO::getDept).end();
         return userVoPage;
     }
 

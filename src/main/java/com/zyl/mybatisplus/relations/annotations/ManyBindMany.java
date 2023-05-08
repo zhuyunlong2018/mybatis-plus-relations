@@ -59,4 +59,12 @@ public @interface ManyBindMany {
      */
     String lastSql() default "";
 
+    /**
+     * 中间表List迭代器，可以在主模型中设置一个方法来接收中间表的迭代，此处填写模型的方法名称
+     * 例如setRelationTableProperty
+     * 方法体：public void setRelationTableProperty(List<linkModel> linkModels)
+     * @return
+     */
+    String iterateLinkMethod() default "";
+
 }

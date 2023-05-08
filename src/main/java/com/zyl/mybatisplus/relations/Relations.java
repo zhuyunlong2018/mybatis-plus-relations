@@ -5,18 +5,10 @@ import com.zyl.mybatisplus.relations.binder.EntityBinder;
 import com.zyl.mybatisplus.relations.binder.ListBinder;
 import lombok.Data;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Data
 public class Relations {
-
-    public static Map<String, RelationCache> relationMap = new HashMap<>();
-
-    public static String cacheKey(Class<?> clazz, String field) {
-        return clazz.getName() + "." + field;
-    }
 
     /**
      * 获取实体类关联绑定类

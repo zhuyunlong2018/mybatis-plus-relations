@@ -17,20 +17,20 @@ public class BindOneResolver extends Resolver<BindOne>{
     }
 
     @Override
-    protected void checkFieldType(Field field) {
+    protected void checkFieldType() {
         if (!Model.class.isAssignableFrom(field.getType())) {
             throw new RelationAnnotationException(field.getName() + "绑定对象需要继承Model类型");
         }
     }
 
     @Override
-    protected void setForeignEntityClass(Field field) {
+    protected void setForeignEntityClass() {
         foreignEntityClass = field.getType();
         cache.setForeignEntityClass((Class<? extends Model<?>>) foreignEntityClass);
     }
 
     @Override
-    protected void setRelationPropertySetter(Field field) {
+    protected void setRelationPropertySetter() {
         final BiConsumer<?, ?> setterFunc = CreateFunctionUtil.createSetFunction(localEntityClass,
                 BeanUtils.getSetterMethodName(field.getName()), foreignEntityClass);
         cache.setRelationEntitySetter(setterFunc);

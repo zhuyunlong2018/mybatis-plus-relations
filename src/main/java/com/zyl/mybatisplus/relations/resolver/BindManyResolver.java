@@ -21,7 +21,7 @@ public class BindManyResolver extends Resolver<BindMany> {
     }
 
     @Override
-    protected void checkFieldType(Field field) {
+    protected void checkFieldType() {
         if (field.getType() != java.util.List.class) {
             throw new RelationAnnotationException(field.getName() + "绑定对象需要为List类型");
         }

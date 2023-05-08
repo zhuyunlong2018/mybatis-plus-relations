@@ -8,17 +8,17 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@TableName("tb_subject")
-public class Subject extends Model<Subject> {
+@TableName("r_skill")
+public class Skill extends Model<Skill> {
 
     @TableId()
-    private Integer subId;
-    private String subName;
+    private Integer id;
+    private String name;
 
-    public Subject(Subject subject) {
-        if (subject != null) {
-            this.subId = subject.getSubId();
-            this.subName = subject.getSubName();
+    public Skill(Skill skill) {
+        if (skill != null) {
+            this.id = skill.getId();
+            this.name = skill.getName();
         }
     }
 }
