@@ -29,8 +29,8 @@ public class AutoMapperConfig {
 ```java
 package com.zyl.mybatisplus.entity.vo;
 
-import com.zyl.mybatisplus.domain.Dept;
-import com.zyl.mybatisplus.domain.User;
+import Dept;
+import User;
 import com.zyl.mybatisplus.relations.annotations.BindMany;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
