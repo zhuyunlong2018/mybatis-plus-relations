@@ -60,6 +60,6 @@ public abstract class Binder<T> implements IBinder<T> {
      * @return
      */
     protected <R extends Model<?>> IHandler<T, R> useLessBinder() {
-        return new UselessHandler<>();
+        return new UselessHandler<>(this);
     }
 }

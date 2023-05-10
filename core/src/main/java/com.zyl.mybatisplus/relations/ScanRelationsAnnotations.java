@@ -17,6 +17,10 @@ import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+/**
+ * 包扫描器
+ * TODO: 待重构为可以通配符等操作
+ */
 public class ScanRelationsAnnotations {
 
     public ScanRelationsAnnotations(String[] entityPackages) {

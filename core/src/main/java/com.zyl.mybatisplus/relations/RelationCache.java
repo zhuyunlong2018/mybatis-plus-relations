@@ -49,9 +49,6 @@ public class RelationCache {
      */
     public static RelationCache getCache(Class<?> entityClass, String property) {
         if (!relationMap.containsKey(cacheKey(entityClass, property))) {
-            System.out.println(relationMap);
-            System.out.println(entityClass);
-            System.out.println(property);
             throw new RelationAnnotationException("模型属性未绑定关系，获取关系缓存错误" + entityClass + property);
         }
         return relationMap.get(cacheKey(entityClass, property));

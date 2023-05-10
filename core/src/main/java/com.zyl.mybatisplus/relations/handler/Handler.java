@@ -21,7 +21,7 @@ public abstract class Handler<T, R> implements IHandler<T, R> {
     /**
      * 关系构造器
      */
-    protected Binder<T> binder;
+    protected IBinder<T> binder;
     /**
      * 补充查询器
      */

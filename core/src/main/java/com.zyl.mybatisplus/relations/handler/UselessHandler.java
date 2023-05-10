@@ -14,6 +14,9 @@ import java.util.function.Consumer;
  * @param <R>
  */
 public class UselessHandler<T, R> extends Handler<T, R> implements IManyBindHandler<T, R> {
+    public UselessHandler(IBinder<T> binder) {
+        this.binder = binder;
+    }
     @Override
     protected LambdaQueryWrapper<R> getQueryWrapper() {
         return null;
