@@ -1,5 +1,6 @@
 package com.zyl.mybatisplus.relations.binder;
 
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.zyl.mybatisplus.relations.RelationCache;
 import com.zyl.mybatisplus.relations.func.IGetter;
 import com.zyl.mybatisplus.relations.handler.Handler;
@@ -58,7 +59,7 @@ public abstract class Binder<T> implements IBinder<T> {
      * @param <R>
      * @return
      */
-    protected <R> IHandler<T, R> useLessBinder() {
+    protected <R extends Model<?>> IHandler<T, R> useLessBinder() {
         return new UselessHandler<>();
     }
 }

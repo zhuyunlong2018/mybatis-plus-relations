@@ -2,6 +2,7 @@ package com.zyl.mybatisplus.relations.handler;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.zyl.mybatisplus.relations.RelationCache;
 import com.zyl.mybatisplus.relations.binder.Binder;
 import com.zyl.mybatisplus.relations.utils.StringUtils;
@@ -120,7 +121,7 @@ public class ListManyBindManyHandler<T, R> extends ListBindManyHandler<T, R> imp
      * @return
      */
     @SuppressWarnings({"unchecked"})
-    public <L> IManyBindHandler<T, R> linkQuery(Consumer<LambdaQueryWrapper<L>> lambdaWrapperFunc) {
+    public <L extends Model<?>> IManyBindHandler<T, R> linkQuery(Consumer<LambdaQueryWrapper<L>> lambdaWrapperFunc) {
         this.linkLambdaWrapperFunc = (Consumer<LambdaQueryWrapper<?>>) (Object) lambdaWrapperFunc;
         return this;
     }

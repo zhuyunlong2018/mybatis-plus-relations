@@ -1,5 +1,6 @@
 package com.zyl.mybatisplus.relations.binder;
 
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.zyl.mybatisplus.relations.RelationCache;
 import com.zyl.mybatisplus.relations.exceptions.RelationAnnotationException;
 import com.zyl.mybatisplus.relations.func.IGetter;
@@ -43,7 +44,7 @@ public class ListBinder<T> extends Binder<T> {
      * @return
      */
     @Override
-    public <R> IManyBindHandler<T, R> manyBindMany(IGetter<T, List<R>> propertyGetter) {
+    public <R extends Model<?>> IManyBindHandler<T, R> manyBindMany(IGetter<T, List<R>> propertyGetter) {
         init(propertyGetter);
         if (useLess) {
             return (IManyBindHandler<T, R>) useLessBinder();
@@ -65,7 +66,7 @@ public class ListBinder<T> extends Binder<T> {
      * @return
      */
     @Override
-    public <R> IHandler<T, R> bindMany(IGetter<T, List<R>> propertyGetter) {
+    public <R extends Model<?>> IHandler<T, R> bindMany(IGetter<T, List<R>> propertyGetter) {
         init(propertyGetter);
         if (useLess) {
             return useLessBinder();
@@ -83,7 +84,7 @@ public class ListBinder<T> extends Binder<T> {
      * @return
      */
     @Override
-    public <R> IHandler<T, R> bindOne(IGetter<T, R> propertyGetter) {
+    public <R extends Model<?>> IHandler<T, R> bindOne(IGetter<T, R> propertyGetter) {
         init(propertyGetter);
         if (useLess) {
             return useLessBinder();

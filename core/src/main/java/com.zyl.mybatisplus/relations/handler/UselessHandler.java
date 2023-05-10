@@ -2,6 +2,7 @@ package com.zyl.mybatisplus.relations.handler;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.zyl.mybatisplus.relations.binder.IBinder;
 
 import java.util.function.Consumer;
@@ -36,7 +37,7 @@ public class UselessHandler<T, R> extends Handler<T, R> implements IManyBindHand
     public void end() {}
 
     @Override
-    public <L> IManyBindHandler<T, R> linkQuery(Consumer<LambdaQueryWrapper<L>> lambdaWrapperFunc) {
+    public <L extends Model<?>> IManyBindHandler<T, R> linkQuery(Consumer<LambdaQueryWrapper<L>> lambdaWrapperFunc) {
         return this;
     }
 }

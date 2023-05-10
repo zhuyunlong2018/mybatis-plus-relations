@@ -52,21 +52,32 @@ public class DeptVo extends Dept {
     }
 }
 ```
+#### 注解说明
+##### 注解类别
+- @BindOne 绑定一对一关系
+- @BindMany 绑定一对多关系
+- @ManyBindMany 绑定多对多关系
 
-目前实现@BindMany和@BindOne注解，分别表示绑定一对多和一对一，被关联模型（entity）必须是mybatis-plus的Model的子孙类
+##### 以上三个注解都有以下属性
+- localProperty 主表字段的entity属性
+- foreignProperty 副表字段的entity属性
+- applySql 中间追加的sql语句，一般用于追加where，调用方法为LambdaQueryWrapper的apply方法
+- lastSql 末尾追加的sql语句，调用LambdaQueryWrapper的last方法
+
+##### 其中，@ManyBindMany多出以下几个属性
+- linkModel 中间表模型类
+- linkLocalProperty 中间表链接主表的字段的entity属性
+- linkForeignProperty 中间表链接副表的字段的entity属性
+- linkApplySql 中间表的中间追加的sql语句，同applySql，不过是用于中间表过滤
+- linkLastSql 中间表末尾追加sql语句，同lastSql，作用于中间表过滤
+- iterateLinkMethod 主表entity可以设置的迭代器方法，接收中间表过滤的List
+
+###### 注意，被关联模型（entity）必须是mybatis-plus的Model的子孙类
 
 #### 3. 查询注入
-
 ```java
 package com.zyl.mybatisplus.service.impl;
-
 // import ...;
-
-
-/**
- * @author explore
- * @since 2021/05/24 11:09
- **/
 @Service
 public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements IDeptService {
 
@@ -103,8 +114,6 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements ID
 // 使用bindMany方法传入lambda可以获得关联表的LambdaQueryWrapper进行添加其他筛选条件
 // Relations.with(deptVos).bindMany(DeptVo::getUsers).query(wrapper -> wrapper.eq(User::getUserId, 1)).end();
 ```
-
-
 
 
 ### 参考资料

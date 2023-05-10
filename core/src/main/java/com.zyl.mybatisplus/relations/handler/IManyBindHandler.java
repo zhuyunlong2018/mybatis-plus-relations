@@ -1,6 +1,7 @@
 package com.zyl.mybatisplus.relations.handler;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 
 import java.util.function.Consumer;
 
@@ -19,5 +20,5 @@ public interface IManyBindHandler<T, R> extends IHandler<T, R> {
      *      wrapper.gt(UserSkillRelation::getScore, 90);
      * })
      */
-    <L> IManyBindHandler<T, R> linkQuery(Consumer<LambdaQueryWrapper<L>> lambdaWrapperFunc);
+    <L extends Model<?>> IManyBindHandler<T, R> linkQuery(Consumer<LambdaQueryWrapper<L>> lambdaWrapperFunc);
 }
