@@ -14,11 +14,6 @@ import java.util.function.Consumer;
 public interface IHandler<T, R> {
 
     /**
-     * 获取处理器是否处理完毕，返回true后，处理器再调用其他方法都将失效
-     */
-    Boolean getEnded();
-
-    /**
      * 关联副表查询构造器，使用方式如下，其中Dept为关联副表模型
      * .query(wrapper -> wrapper.eq(Dept::getId, 1))
      */

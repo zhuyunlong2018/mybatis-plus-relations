@@ -47,9 +47,7 @@ public abstract class Binder<T> implements IBinder<T> {
      */
     public void end() {
         for (Handler<T, ?> handler : handlers) {
-            if (!handler.getEnded()) {
-                handler.end();
-            }
+            handler.end();
         }
     }
 

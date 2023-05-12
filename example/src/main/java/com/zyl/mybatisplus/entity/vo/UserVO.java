@@ -47,7 +47,7 @@ public class UserVO extends User {
             linkForeignProperty = "skillId",
             iterateLinkMethod = "setUserSkillScope"
     )
-    private List<Skill> skills;
+    private List<SkillVO> skills;
 
     @BindMany(localProperty = "id", foreignProperty = "userId")
     private List<UserSkillVO> userSkills;
@@ -61,8 +61,8 @@ public class UserVO extends User {
      * @param relations
      */
     public void setUserSkillScope(List<UserSkillRelation> relations) {
-        System.out.println("=======================");
-        System.out.println(relations);
-        System.out.println("=======================");
+        for (int i = 0; i < relations.size(); i++) {
+            this.skills.get(i).setScore(relations.get(i).getScore());
+        }
     }
 }

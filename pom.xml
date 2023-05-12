@@ -41,8 +41,9 @@
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
+                <artifactId>spring-context</artifactId>
                 <version>${srpingfroamework.version}</version>
+                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.mybatis.spring.boot</groupId>

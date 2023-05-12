@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 /**
  * 关联处理器
+ *
  * @param <T>
  * @param <R>
  */
@@ -55,11 +56,6 @@ public abstract class Handler<T, R> implements IHandler<T, R> {
      */
     @SuppressWarnings({"rawtypes"})
     protected abstract void queryRelation();
-
-
-    public Boolean getEnded() {
-        return ended;
-    }
 
     /**
      * 关联副表查询构造器，使用方式如下，其中Dept为关联副表模型
@@ -105,6 +101,7 @@ public abstract class Handler<T, R> implements IHandler<T, R> {
     /**
      * 模型数组转换为VO对象
      * 深度绑定时使用
+     *
      * @param model
      * @return
      */
