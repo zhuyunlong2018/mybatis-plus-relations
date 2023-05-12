@@ -4,13 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.zhuyunlong2018</groupId>
-    <artifactId>mp_relations</artifactId>
+    <groupId>io.gitee.zhuyunlong2018</groupId>
+    <artifactId>mybatis-plus-relations</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>mybatis-plus-relations</name>
     <description>mybatis plus 关联插件</description>
-    <url>https://github.com/zhuyunlong2018/mybatis-plus-relations.git</url>
     <modules>
         <module>core</module>
         <module>example</module>
@@ -25,7 +24,49 @@
         <lombok.version>1.18.24</lombok.version>
         <mysql.connector.java.version>8.0.29</mysql.connector.java.version>
         <jackson.databind.version>2.13.3</jackson.databind.version>
+        <projectUrl>https://gitee.com/zhuyunlong2018/mybatis-plus-relations.git</projectUrl>
+        <serverId>ossrh</serverId>
     </properties>
+
+    <!--填入开发者信息，姓名、邮箱、项目地址-->
+    <developers>
+        <developer>
+            <name>zhuyunlong</name>
+            <email>920200256@qq.com</email>
+            <url>${projectUrl}</url>
+        </developer>
+    </developers>
+
+    <!--以下部分内容不需要修改，直接复制咱贴即可-->
+    <url>${projectUrl}</url>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo,manual</distribution>
+        </license>
+    </licenses>
+    <scm>
+        <!-- 采用projectUrl变量代替这个值，方便给重复利用这个配置，也就是上面的标签替换一下值就行 -->
+        <connection>${projectUrl}</connection>
+        <developerConnection>${projectUrl}</developerConnection>
+        <url>${projectUrl}</url>
+    </scm>
+    <distributionManagement>
+        <snapshotRepository>
+            <!--这个id和settings.xml中servers.server.id要相同，因为上传jar需要登录才有权限-->
+            <id>${serverId}</id>
+            <name>OSS Snapshots Repository</name>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <!--这个id和settings.xml中servers.server.id要相同，因为上传jar需要登录才有权限-->
+            <id>${serverId}</id>
+            <name>OSS Staging Repository</name>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -77,9 +118,9 @@
                 <version>${jackson.databind.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.zhuyunlong2018</groupId>
+                <groupId>io.gitee.zhuyunlong2018</groupId>
                 <artifactId>core</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>1.0.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -111,5 +152,79 @@
 
 
     <build>
+        <plugins>
+            <!-- 编译插件，设置源码以及编译的jdk版本 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+            <!--打包源码的插件-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Javadoc 文档生成插件-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <configuration>
+                    <!-- 忽略生成文档中的错误 -->
+                    <additionalparam>-Xdoclint:none</additionalparam>
+                    <aggregate>true</aggregate>
+                    <charset>UTF-8</charset><!-- utf-8读取文件 -->
+                    <encoding>UTF-8</encoding><!-- utf-8进行编码代码 -->
+                    <docencoding>UTF-8</docencoding><!-- utf-8进行编码文档 -->
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--公钥私钥插件，也就是上传需要进行验证用户名和密码过程中需要用到的插件-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--部署插件-->
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>${serverId}</serverId>
+                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 </project>
