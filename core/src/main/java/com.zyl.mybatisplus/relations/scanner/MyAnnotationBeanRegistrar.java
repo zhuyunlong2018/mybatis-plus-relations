@@ -1,4 +1,4 @@
-package com.zyl.mybatisplus.relations;
+package com.zyl.mybatisplus.relations.scanner;
 
 import com.zyl.mybatisplus.relations.annotations.RelationsScan;
 import com.zyl.mybatisplus.relations.exceptions.ScanAnnotationsException;
@@ -7,7 +7,9 @@ import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;
 
 import java.io.IOException;
+import java.net.JarURLConnection;
 import java.util.*;
+import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 public class MyAnnotationBeanRegistrar implements ImportBeanDefinitionRegistrar {
@@ -47,16 +49,15 @@ public class MyAnnotationBeanRegistrar implements ImportBeanDefinitionRegistrar 
             String packagePrefix = packageName.substring(0, packageName.lastIndexOf(".**"));
             return getSubPackageNames(packagePrefix, true);
         }
-
         String[] parts = packageName.split("\\.\\*\\.");
         if (parts.length == 2) {
             String prefix = parts[0];
             String suffix = parts[1];
             return getSubPackageNames(prefix, false)
                     .stream()
-                    .map(item -> getSubPackageNames(item, false))
+                    .map(item -> getSubPackageNames(item, true))
                     .flatMap(Set::stream)
-                    .filter(name -> name.endsWith(suffix))
+                    .filter(name -> name.endsWith("." + suffix))
                     .collect(Collectors.toSet());
         }
         String[] deepParts = packageName.split("\\.\\*\\*\\.");
@@ -64,7 +65,7 @@ public class MyAnnotationBeanRegistrar implements ImportBeanDefinitionRegistrar 
             String prefix = deepParts[0];
             String suffix = deepParts[1];
             return getSubPackageNames(prefix, true)
-                    .stream().filter(name -> name.endsWith(suffix))
+                    .stream().filter(name -> name.endsWith("." + suffix))
                     .collect(Collectors.toSet());
         }
         HashSet<String> set = new HashSet<>();
@@ -85,8 +86,16 @@ public class MyAnnotationBeanRegistrar implements ImportBeanDefinitionRegistrar 
         String fullPath = resource.getFile();
         if (fullPath.contains("!")) {
             // 如果路径中包含 "!" 字符，则说明这是一个 Jar 包文件。
-            String jarFilePath = fullPath.substring(0, fullPath.indexOf('!'));
-            return getSubPackagesFromJar(jarFilePath, packagePath);
+            JarURLConnection jarURLConnection = null;
+            try {
+                jarURLConnection = (JarURLConnection) resource.openConnection();
+            } catch (IOException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+                throw new ScanAnnotationsException("jar包路径错误:" + packageName);
+            }
+//            String jarFilePath = fullPath.substring(0, fullPath.indexOf('!'));
+            return getSubPackagesFromJar(jarURLConnection, packagePath);
         } else {
             // 否则，路径应该对应于一个目录。
             return getSubPackagesFromDir(fullPath, packageName, deep);
@@ -109,15 +118,16 @@ public class MyAnnotationBeanRegistrar implements ImportBeanDefinitionRegistrar 
         return subPackageNames;
     }
 
-    private Set<String> getSubPackagesFromJar(String jarFilePath, String packagePath) {
-        Set<String> subPackageNames = new HashSet<>();
-        java.util.jar.JarFile jarFile = null;
+    private Set<String> getSubPackagesFromJar(JarURLConnection jarURLConnection, String packagePath) {
+        JarFile jarFile = null;
         try {
-            jarFile = new java.util.jar.JarFile(jarFilePath);
+            jarFile = jarURLConnection.getJarFile();//only get "XXX.jar!/BOOT-INF/classes" ??
         } catch (IOException e) {
+            // TODO Auto-generated catch block
             e.printStackTrace();
-            throw new ScanAnnotationsException("扫描jar路劲错误" + jarFilePath);
+            throw new ScanAnnotationsException("扫描jar路劲错误" + packagePath);
         }
+        Set<String> subPackageNames = new HashSet<>();
         java.util.Enumeration<java.util.jar.JarEntry> entries = jarFile.entries();
         while (entries.hasMoreElements()) {
             java.util.jar.JarEntry entry = entries.nextElement();

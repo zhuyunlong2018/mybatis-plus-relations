@@ -1,6 +1,6 @@
 package com.zyl.mybatisplus.relations.annotations;
 
-import com.zyl.mybatisplus.relations.MyAnnotationBeanRegistrar;
+import com.zyl.mybatisplus.relations.scanner.MyAnnotationBeanRegistrar;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.ElementType;

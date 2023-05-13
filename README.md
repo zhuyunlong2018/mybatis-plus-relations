@@ -144,3 +144,6 @@ TODO:  示意图
 - 测试用数据结构直接使用 mybatisplus-joinquery：https://gitee.com/java-spring-demo/mybatisplus-joinquery.git
 - 部分代码参考：https://gitee.com/xiaokedamowang/bilibili
 
+
+#### deploy
+mvn clean deploy -pl core -am
