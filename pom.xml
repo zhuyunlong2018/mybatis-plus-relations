@@ -11,8 +11,8 @@
     <name>mybatis-plus-relations</name>
     <description>mybatis plus 关联插件</description>
     <modules>
-        <module>core</module>
-        <module>example</module>
+        <module>mybatis-plus-relations-core</module>
+        <module>mybatis-plus-relations-example</module>
     </modules>
 
     <properties>
@@ -24,6 +24,7 @@
         <lombok.version>1.18.24</lombok.version>
         <mysql.connector.java.version>8.0.29</mysql.connector.java.version>
         <jackson.databind.version>2.13.3</jackson.databind.version>
+        <mybatis.version>2.2.0</mybatis.version>
         <projectUrl>https://gitee.com/zhuyunlong2018/mybatis-plus-relations.git</projectUrl>
         <serverId>ossrh</serverId>
     </properties>
@@ -89,7 +90,7 @@
             <dependency>
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
-                <version>2.2.0</version>
+                <version>${mybatis.version}</version>
                 <scope>runtime</scope>
             </dependency>
             <dependency>
@@ -119,8 +120,8 @@
             </dependency>
             <dependency>
                 <groupId>io.gitee.zhuyunlong2018</groupId>
-                <artifactId>core</artifactId>
-                <version>1.0.0</version>
+                <artifactId>mybatis-plus-relations-core</artifactId>
+                <version>${version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -161,10 +162,6 @@
                         <source>1.8</source>
                         <target>1.8</target>
                     </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -214,89 +211,41 @@
                         <encoding>UTF-8</encoding>
                         <show>protected</show>
                         <notree>true</notree>
-
                         <!-- Avoid running into Java 8's very restrictive doclint issues -->
                         <failOnError>false</failOnError>
                         <doclint>none</doclint>
                     </configuration>
                 </plugin>
+
+                <!--&lt;!&ndash;公钥私钥插件，也就是上传需要进行验证用户名和密码过程中需要用到的插件&ndash;&gt;&ndash;&gt;-->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>1.5</version>
+                    <executions>
+                        <execution>
+                            <id>sign-artifacts</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <!--部署插件-->
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>1.6.7</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <serverId>${serverId}</serverId>
+                        <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                        <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
-
-        <!--        <plugins>-->
-        <!--            &lt;!&ndash; 编译插件，设置源码以及编译的jdk版本 &ndash;&gt;-->
-        <!--            <plugin>-->
-        <!--                <groupId>org.apache.maven.plugins</groupId>-->
-        <!--                <artifactId>maven-compiler-plugin</artifactId>-->
-        <!--                <configuration>-->
-        <!--                    <source>8</source>-->
-        <!--                    <target>8</target>-->
-        <!--                </configuration>-->
-        <!--            </plugin>-->
-        <!--            &lt;!&ndash;打包源码的插件&ndash;&gt;-->
-        <!--            <plugin>-->
-        <!--                <groupId>org.apache.maven.plugins</groupId>-->
-        <!--                <artifactId>maven-source-plugin</artifactId>-->
-        <!--                <version>2.2.1</version>-->
-        <!--                <executions>-->
-        <!--                    <execution>-->
-        <!--                        <id>attach-sources</id>-->
-        <!--                        <goals>-->
-        <!--                            <goal>jar-no-fork</goal>-->
-        <!--                        </goals>-->
-        <!--                    </execution>-->
-        <!--                </executions>-->
-        <!--            </plugin>-->
-        <!--            &lt;!&ndash; Javadoc 文档生成插件&ndash;&gt;-->
-        <!--            <plugin>-->
-        <!--                <groupId>org.apache.maven.plugins</groupId>-->
-        <!--                <artifactId>maven-javadoc-plugin</artifactId>-->
-        <!--                <version>2.9.1</version>-->
-        <!--                <configuration>-->
-        <!--                    &lt;!&ndash; 忽略生成文档中的错误 &ndash;&gt;-->
-        <!--                    <additionalparam>-Xdoclint:none</additionalparam>-->
-        <!--                    <aggregate>true</aggregate>-->
-        <!--                    <charset>UTF-8</charset>&lt;!&ndash; utf-8读取文件 &ndash;&gt;-->
-        <!--                    <encoding>UTF-8</encoding>&lt;!&ndash; utf-8进行编码代码 &ndash;&gt;-->
-        <!--                    <docencoding>UTF-8</docencoding>&lt;!&ndash; utf-8进行编码文档 &ndash;&gt;-->
-        <!--                </configuration>-->
-        <!--                <executions>-->
-        <!--                    <execution>-->
-        <!--                        <id>attach-javadocs</id>-->
-        <!--                        <goals>-->
-        <!--                            <goal>jar</goal>-->
-        <!--                        </goals>-->
-        <!--                    </execution>-->
-        <!--                </executions>-->
-        <!--            </plugin>-->
-        <!--            &lt;!&ndash;公钥私钥插件，也就是上传需要进行验证用户名和密码过程中需要用到的插件&ndash;&gt;-->
-        <!--            <plugin>-->
-        <!--                <groupId>org.apache.maven.plugins</groupId>-->
-        <!--                <artifactId>maven-gpg-plugin</artifactId>-->
-        <!--                <version>1.5</version>-->
-        <!--                <executions>-->
-        <!--                    <execution>-->
-        <!--                        <id>sign-artifacts</id>-->
-        <!--                        <phase>verify</phase>-->
-        <!--                        <goals>-->
-        <!--                            <goal>sign</goal>-->
-        <!--                        </goals>-->
-        <!--                    </execution>-->
-        <!--                </executions>-->
-        <!--            </plugin>-->
-        <!--            &lt;!&ndash;部署插件&ndash;&gt;-->
-        <!--            <plugin>-->
-        <!--                <groupId>org.sonatype.plugins</groupId>-->
-        <!--                <artifactId>nexus-staging-maven-plugin</artifactId>-->
-        <!--                <version>1.6.7</version>-->
-        <!--                <extensions>true</extensions>-->
-        <!--                <configuration>-->
-        <!--                    <serverId>${serverId}</serverId>-->
-        <!--                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>-->
-        <!--                    <autoReleaseAfterClose>true</autoReleaseAfterClose>-->
-        <!--                </configuration>-->
-        <!--            </plugin>-->
-        <!--        </plugins>-->
     </build>
 
     <profiles>

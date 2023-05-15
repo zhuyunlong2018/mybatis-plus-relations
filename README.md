@@ -15,12 +15,24 @@
 
 ### 使用方法
 
+添加maven依赖
+```xml
+<dependency>
+      <groupId>io.gitee.zhuyunlong2018</groupId>
+      <artifactId>mybatis-plus-relations-core</artifactId>
+      <version>1.0.0</version>
+</dependency>
+```
+
 #### 1. 添加扫描注解包
 给SpringBoot入口程序添加@RelationsScan注解即可，包名可以实现和@MapperScan一样的通配符操作，*代表一级通配符，**代表可以多级通配符，用于扫描含有关联查询注解的entity或者vo等
 ```java
 @SpringBootApplication
-@MapperScan(basePackages = "com.zyl.mybatisplus.**.mapper")
-@RelationsScan({"com.zyl.mybatisplus.*.vo", "com.zyl.mybatisplus.entity"})
+@MapperScan(basePackages = "com.gitee.zhuyunlong2018.mybatisplusrelations.**.mapper")
+@RelationScan({
+        "com.gitee.zhuyunlong2018.mybatisplusrelations.*.vo",
+        "com.gitee.zhuyunlong2018.mybatisplusrelations.entity"
+})
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
@@ -30,17 +42,6 @@ public class Application {
 
 #### 2. 给关联属性添加注解
 ```java
-package com.zyl.mybatisplus.entity.vo;
-
-import Dept;
-import User;
-import com.zyl.mybatisplus.relations.annotations.BindMany;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
-import lombok.experimental.Accessors;
-import java.util.List;
-
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
@@ -79,8 +80,6 @@ public class DeptVo extends Dept {
 
 #### 3. 查询注入
 ```java
-package com.zyl.mybatisplus.service.impl;
-// import ...;
 @Service
 public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements IDeptService {
 
@@ -138,6 +137,13 @@ IBinder提供一个deepBinder的方法，可以将副表的绑定器继续绑定
 TODO:  示意图
 
 
+### 常见问题
+- 出现java.lang.ClassCastException，可能是项目使用了spring-boot-devtools，可以在src/main/resources/META-INF/spring-devtools.
+  properties添加如下，或者移除spring-boot-devtools
+```shell
+restart.include.relations=/io.gitee.zhuyunlong2018.*.jar
+```
+
 ### 参考资料
 
 - 扫描包路劲注解使用 mprelation：https://github.com/dreamyoung/mprelation.git
@@ -146,4 +152,4 @@ TODO:  示意图
 
 
 #### deploy
-mvn clean deploy -pl core -am
+mvn clean deploy -pl mybatis-plus-relations-core -am
