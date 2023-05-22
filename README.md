@@ -318,15 +318,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 5. 关联处理器IHander进行副表或中间表的queryWrapper构建和数据查询，并组装好返回业务层
 6. 如果需要绑定多个关联属性，可以继续调用IBinder的其他bind方法构建新的属性绑定器
 
-TODO:  示意图
-
-
 ### 常见问题
 - 出现java.lang.ClassCastException，可能是项目使用了spring-boot-devtools，可以在src/main/resources/META-INF/spring-devtools.
   properties添加如下，或者移除spring-boot-devtools
 ```shell
 restart.include.relations=/io.gitee.zhuyunlong2018.*.jar
 ```
+
+- 出现java.lang.NullPointerException 
+1. 可能被关联模型entity或者vo没有无惨构造函数，可提添加@NoArgsConstructor注解或无参构造函数
+2. 注解参数localProperty填写错误
+
+- 出现java.lang.NoSuchMethodException，注解参数foreignProperty填写错误
 
 ### 参考资料
 
